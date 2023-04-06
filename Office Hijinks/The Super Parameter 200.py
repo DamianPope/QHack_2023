@@ -33,7 +33,7 @@ def model(alpha):
         to the alpha-th computational basis state
     '''
 
-    #generate the alpha-th (i.e., 0th, 1st, 2nd, 3rd etc.) Fourier state for 3 quits in a bitwise fashion
+    #generate the alpha-th (i.e., 0th, 1st, 2nd, 3rd etc.) Fourier state for 3 qubits in a bitwise fashion
     for i in range(3):
         qml.Hadamard(wires=i)
         qml.PhaseShift((2*np.pi/8)*alpha*(2**(2-i)),wires=i)
