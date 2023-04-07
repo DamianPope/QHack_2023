@@ -35,9 +35,7 @@ def is_unsafe(alpha, beta, epsilon):
 
     """
     # Put your code here #
-    #create 2 separate devices so that they're easily distinguishable
     dev = qml.device("default.qubit", wires=2)
-    dev2 = qml.device("default.qubit", wires=2)
 
     #Define a quantum function/QNODE that generates psi_U(theta)
     #note that it returns a qml.state() 
@@ -53,7 +51,7 @@ def is_unsafe(alpha, beta, epsilon):
     #Define a function that generates the encoded state, (R_x(alpha) R_z(beta))^2  U(theta) |0 0>
     #Note that it returns a qml.state() 
     
-    @qml.qnode(dev2)
+    @qml.qnode(dev)
     def circuit_encoded_state(theta,alpha,beta):    
         qml.BasisState(np.array([0, 0]), wires=range(2))        
 
@@ -76,15 +74,7 @@ def is_unsafe(alpha, beta, epsilon):
     
     #define a cost function
     def cost_fn(theta):
-        state_0 = circuit_U(theta)
-        state_1 = circuit_encoded_state(theta,alpha,beta)        
-        temp = 0.0
-        
-        #calculate <state_0 | state_1 >
-        for i in range(4):
-            temp += np.conjugate(state_0[i])*state_1[i]
-            
-        fidelity = (np.abs(temp))**2
+        fidelity = qml.qinfo.fidelity(circuit_U, circuit_encoded_state, wires0=[0,1], wires1=[0,1])((theta), (theta,alpha,beta)) 
         local_fidelity_error = 1 - fidelity
     
         #We want to see what the smallest possible "fidelity error" is for any value of theta & a fixed alpha & beta values encoding scheme
